@@ -35,16 +35,6 @@ resource "aws_cloudwatch_metric_alarm" "dlq_alarm" {
   }
 }
 
-# 2. LAMBDAS 
-data "archive_file" "dummy_lambda" {
-  type        = "zip"
-  output_path = "${path.module}/dummy.zip"
-  source {
-    content  = "exports.handler = async (event) => { return 'Hola, soy de mentira'; };"
-    filename = "index.js"
-  }
-}
-
 # Trabajador 1: Upload Lambda
 resource "aws_lambda_function" "upload_lambda" {
   function_name = "upload-lambda-${var.environment}"
@@ -55,8 +45,8 @@ resource "aws_lambda_function" "upload_lambda" {
   timeout       = 30  # Timeout según diagrama
 
   # Usamos el ZIP temporal por ahora
-  filename         = data.archive_file.dummy_lambda.output_path
-  source_code_hash = data.archive_file.dummy_lambda.output_base64sha256
+  filename         = "${path.module}/../src/upload-lambda.zip"
+  source_code_hash = filebase64sha256("${path.module}/../src/upload-lambda.zip")
 
   # Lo metemos a la VPC
   vpc_config {
@@ -84,9 +74,9 @@ resource "aws_lambda_function" "crop_lambda" {
   memory_size   = 512 # Memoria mayor porque procesar imágenes pesa
   timeout       = 60
 
-  filename         = data.archive_file.dummy_lambda.output_path
-  source_code_hash = data.archive_file.dummy_lambda.output_base64sha256
-
+  filename         = "${path.module}/../src/crop-lambda.zip"
+  source_code_hash = filebase64sha256("${path.module}/../src/crop-lambda.zip")
+  
   vpc_config {
     subnet_ids         = [aws_subnet.private_a.id, aws_subnet.private_b.id]
     security_group_ids = [aws_security_group.sg_crop_lambda.id]
