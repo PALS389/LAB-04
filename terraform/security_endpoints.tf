@@ -1,7 +1,7 @@
 # 1. GRUPOS DE SEGURIDAD 
 # Portero para la Lambda de Subida
 resource "aws_security_group" "sg_upload_lambda" {
-  name        = "sg-upload-lambda-${var.environment}"
+  name        = "upload-lambda-sg-${var.environment}"
   description = "Security Group para la Lambda que sube imagenes"
   vpc_id      = aws_vpc.main.id
 
@@ -18,7 +18,7 @@ resource "aws_security_group" "sg_upload_lambda" {
 
 # Portero para la Lambda de Recorte (Crop)
 resource "aws_security_group" "sg_crop_lambda" {
-  name        = "sg-crop-lambda-${var.environment}"
+  name        = "crop-lambda-sg-${var.environment}"
   description = "Security Group para la Lambda que recorta imagenes"
   vpc_id      = aws_vpc.main.id
 
@@ -35,7 +35,7 @@ resource "aws_security_group" "sg_crop_lambda" {
 
 # Portero para el Túnel secreto de SQS
 resource "aws_security_group" "sg_vpce_sqs" {
-  name        = "sg-vpce-sqs-${var.environment}"
+  name        = "vpce-sqs-sg-${var.environment}"
   description = "Security Group para el VPC Endpoint de SQS"
   vpc_id      = aws_vpc.main.id
 
