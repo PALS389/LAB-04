@@ -4,7 +4,7 @@ Este proyecto implementa una arquitectura serverless robusta y de alta disponibi
 
 **Autor:** Piero Alejandro Leyva Sandoval (PALS)  
 **Institución:** Universidad Privada Antenor Orrego (UPAO)  
-**Curso:** Arquitectura de Sistemas / Laboratorio de Cloud Computing  
+**Curso:** Infraestructura Como Codigo (IAC)
 
 ---
 
