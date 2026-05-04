@@ -4,9 +4,7 @@ const sharp = require("sharp");
 const s3 = new S3Client();
 
 exports.handler = async (event) => {
-
     for (const record of event.Records) {
-
         const sqsBody = JSON.parse(record.body);
         
         for (const s3Event of sqsBody.Records || []) {
@@ -20,20 +18,14 @@ exports.handler = async (event) => {
                 for await (const chunk of getReq.Body) chunks.push(chunk);
                 const imageBuffer = Buffer.concat(chunks);
 
-
                 const circleSvg = Buffer.from('<svg><circle cx="20" cy="20" r="20" /></svg>');
-                
                 const processedBuffer = await sharp(imageBuffer)
                     .resize(40, 40, { fit: 'cover' })
                     .composite([{ input: circleSvg, blend: 'dest-in' }])
                     .png()
                     .toBuffer();
 
-
-                const newKey = key
-                    .replace(process.env.UPLOAD_PREFIX, process.env.PROCESSED_PREFIX)
-                    .replace(/\.[^/.]+$/, "") + "_circular.png";
-
+                const newKey = key.replace("uploads/", "processed/").replace(/\.[^/.]+$/, "") + "_circular.png";
 
                 await s3.send(new PutObjectCommand({
                     Bucket: process.env.S3_BUCKET,
@@ -46,7 +38,7 @@ exports.handler = async (event) => {
 
             } catch (error) {
                 console.error("Error procesando imagen:", error);
-                throw error; 
+                throw error;
             }
         }
     }
